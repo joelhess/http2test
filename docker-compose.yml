@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  http2test:
+    image: http2test
+    build:
+      context: ./http2test
+      dockerfile: Dockerfile
