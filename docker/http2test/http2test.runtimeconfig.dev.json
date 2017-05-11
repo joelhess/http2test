@@ -1,0 +1,7 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "/Users/joelhess/.nuget/packages"
+    ]
+  }
+}
