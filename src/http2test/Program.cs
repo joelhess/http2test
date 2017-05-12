@@ -40,7 +40,7 @@ namespace http2test
             using (var client = new HttpClient())
             {
                 var request =
-                    new HttpRequestMessage(HttpMethod.Post, "https://api.development.push.apple.com/3/device/aaaa") 
+                    new HttpRequestMessage(HttpMethod.Post, "https://api.development.push.apple.com/3/device/08736017052ccdb6925c0be553967be120b0b07f05ff9de19d4f18c4e36c4e67") 
                     {
                         Version = new Version(2, 0)
                     };
@@ -48,7 +48,10 @@ namespace http2test
                 if (authToken != null)
                     request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
 
-                request.Content = new StringContent("{ \"alert\" : \"You've Got Mail\"}");
+
+                request.Headers.Add("apns-topic", "com.spok.notify");
+
+                request.Content = new StringContent(" { \"aps\" : { \"alert\" : \"Hello\" } }");// "{ \"alert\" : \"You've Got Mail\"}");
 
                 try
                 {
