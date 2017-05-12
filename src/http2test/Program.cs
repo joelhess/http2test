@@ -5,7 +5,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-
 namespace http2test
 {
     class Program
@@ -17,25 +16,47 @@ namespace http2test
 		public static string DevelopmentServerAddress = "api.development.push.apple.com:443";
 		public static string ProductionServierAddress = "api.push.apple.com:443";
 
+
+
         static void Main(string[] args)
         {
+            var keyFile = System.IO.File.ReadAllText("APNsAuthKey_XG76H7G3T4.p8");
+
+
+            string issuerId = "3UTKTW44JW";
+
+            var tokenHeader = "{\"alg\":\"ES256\" ,\"kid\":\"XG76H7G3T4\"}";
+            var tokenPayload= "{\"iss\":\"" + issuerId + "\",\"iat\":\"" + ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString() + "\"}";
+
+            var signage = SignES256(keyFile, tokenHeader, tokenPayload);
+
             //createJwt();
-            TestConnection().GetAwaiter().GetResult();
+            TestConnection(signage).GetAwaiter().GetResult();
             Console.ReadLine();
         }
 
-        static async Task TestConnection()
+        static async Task TestConnection(string authToken = null)
         {
             using (var client = new HttpClient())
             {
                 var request =
-                    new HttpRequestMessage(HttpMethod.Get, "https://nghttp2.org")//"https://api.development.push.apple.com/3/device/aaaa") 
-                { Version = new Version(2, 0) };
+                    new HttpRequestMessage(HttpMethod.Post, "https://api.development.push.apple.com/3/device/aaaa") 
+                    {
+                        Version = new Version(2, 0)
+                    };
+
+                if (authToken != null)
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
+
+                request.Content = new StringContent("{ \"alert\" : \"You've Got Mail\"}");
 
                 try
                 {
                     var response = await client.SendAsync(request);
                     Console.WriteLine($"Http Status = {response.StatusCode}");
+                    if (!response.IsSuccessStatusCode)
+                        Console.WriteLine($"Response payload = {response.Content.ReadAsStringAsync().Result}");
+
                     Console.WriteLine($"Http version = {response.Version}");
                 }
                 catch (Exception e)

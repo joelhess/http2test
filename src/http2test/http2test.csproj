@@ -9,4 +9,10 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.1.3" />
     <PackageReference Include="System.Security.Cryptography.Cng" Version="4.3.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="APNsAuthKey_XG76H7G3T4.p8">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
